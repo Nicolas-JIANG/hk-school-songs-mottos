@@ -1,104 +1,165 @@
 (() => {
   const schools = Array.isArray(window.SCHOOLS) ? window.SCHOOLS : [];
+  const fieldLabels = window.SCHOOL_FIELD_LABELS || {};
+
+  const FIELD = {
+    id: "id",
+    code: "No.",
+    nameZh: "校名",
+    nameEn: "School Name",
+    category: "種類",
+    region: "地區",
+    district: "校網",
+    schoolLevel: "中學/小學",
+    sponsor: "辦學團體",
+    website: "學校官方網址"
+  };
+
   const keywordInput = document.getElementById("keyword");
-  const typeFilter = document.getElementById("typeFilter");
+  const categoryFilter = document.getElementById("categoryFilter");
+  const regionFilter = document.getElementById("regionFilter");
   const districtFilter = document.getElementById("districtFilter");
   const resultsEl = document.getElementById("results");
   const resultCountEl = document.getElementById("resultCount");
   const searchBtn = document.getElementById("searchBtn");
 
-  function normalize(value) {
-    return (value || "").toString().toLowerCase().trim();
+  function label(key) {
+    return fieldLabels[key] || key;
   }
 
-  function searchableText(school) {
+  function textValue(record, key) {
+    const value = record[key];
+    return value === undefined || value === null ? "" : String(value).trim();
+  }
+
+  function normalize(value) {
+    return String(value || "").trim().toLowerCase();
+  }
+
+  function searchableText(record) {
     return [
-      school.nameZh,
-      school.nameEn,
-      school.type,
-      school.district,
-      ...(school.aliases || [])
+      textValue(record, FIELD.code),
+      textValue(record, FIELD.nameZh),
+      textValue(record, FIELD.nameEn),
+      textValue(record, FIELD.category),
+      textValue(record, FIELD.region),
+      textValue(record, FIELD.district),
+      textValue(record, FIELD.sponsor),
+      textValue(record, FIELD.website)
     ]
       .join(" ")
       .toLowerCase();
   }
 
-  function scoreSchool(school, query) {
+  function scoreSchool(record, query) {
     if (!query) return 1;
-    const q = normalize(query);
-    const fields = [school.nameZh, school.nameEn, ...(school.aliases || [])].map(normalize);
-    let score = 0;
 
-    for (const field of fields) {
-      if (!field) continue;
+    const q = normalize(query);
+    const primaryFields = [
+      textValue(record, FIELD.code),
+      textValue(record, FIELD.nameZh),
+      textValue(record, FIELD.nameEn)
+    ]
+      .filter(Boolean)
+      .map((value) => value.toLowerCase());
+
+    let score = 0;
+    primaryFields.forEach((field) => {
       if (field === q) score += 120;
       else if (field.startsWith(q)) score += 80;
       else if (field.includes(q)) score += 45;
-    }
+    });
 
-    const full = searchableText(school);
-    if (full.includes(q)) score += 20;
+    if (searchableText(record).includes(q)) score += 20;
     return score;
   }
 
-  function buildDistrictFilter() {
-    const districts = [...new Set(schools.map((s) => s.district).filter(Boolean))].sort((a, b) =>
-      a.localeCompare(b)
+  function uniqueValues(key) {
+    return [...new Set(schools.map((record) => textValue(record, key)).filter(Boolean))].sort((a, b) =>
+      a.localeCompare(b, "zh-Hant")
     );
+  }
 
-    districts.forEach((district) => {
+  function appendOptions(selectEl, key) {
+    uniqueValues(key).forEach((value) => {
       const option = document.createElement("option");
-      option.value = district;
-      option.textContent = district;
-      districtFilter.appendChild(option);
+      option.value = value;
+      option.textContent = value;
+      selectEl.appendChild(option);
     });
   }
 
-  function typeLabel(type) {
-    if (type === "primary") return "Primary";
-    if (type === "secondary") return "Secondary";
-    return "Other";
+  function appendMetaLine(parent, content) {
+    const line = document.createElement("p");
+    line.textContent = content;
+    parent.appendChild(line);
   }
 
   function renderResults() {
     const query = keywordInput.value;
-    const type = typeFilter.value;
+    const category = categoryFilter.value;
+    const region = regionFilter.value;
     const district = districtFilter.value;
 
     const filtered = schools
-      .filter((school) => (!type ? true : school.type === type))
-      .filter((school) => (!district ? true : school.district === district))
-      .map((school) => ({ school, score: scoreSchool(school, query) }))
+      .filter((record) => (!category ? true : textValue(record, FIELD.category) === category))
+      .filter((record) => (!region ? true : textValue(record, FIELD.region) === region))
+      .filter((record) => (!district ? true : textValue(record, FIELD.district) === district))
+      .map((record) => ({ record, score: scoreSchool(record, query) }))
       .filter((entry) => (query ? entry.score > 0 : true))
-      .sort((a, b) => b.score - a.score || a.school.nameEn.localeCompare(b.school.nameEn));
+      .sort((a, b) => {
+        const codeA = textValue(a.record, FIELD.code);
+        const codeB = textValue(b.record, FIELD.code);
+        return b.score - a.score || codeA.localeCompare(codeB, "en");
+      });
 
-    resultCountEl.textContent = `${filtered.length} school(s) found`;
-    resultsEl.innerHTML = "";
+    resultCountEl.textContent = `顯示 ${filtered.length} 間學校`;
+    resultsEl.replaceChildren();
 
     if (filtered.length === 0) {
-      resultsEl.innerHTML = '<p class="card">No matching schools found.</p>';
+      const empty = document.createElement("p");
+      empty.className = "card card-empty";
+      empty.textContent = "找不到符合條件的學校。";
+      resultsEl.appendChild(empty);
       return;
     }
 
-    filtered.forEach(({ school }) => {
+    filtered.forEach(({ record }) => {
       const card = document.createElement("a");
       card.className = "card";
-      card.href = `detail.html?id=${encodeURIComponent(school.id)}`;
-      card.innerHTML = `
-        <h3>${school.nameZh || ""}${school.nameEn ? ` / ${school.nameEn}` : ""}</h3>
-        <p>${typeLabel(school.type)}</p>
-        <p>${school.district || "District not available"}</p>
-        <span class="pill">View Details</span>
-      `;
+      card.href = `detail.html?id=${encodeURIComponent(textValue(record, FIELD.id))}`;
+
+      const title = document.createElement("h3");
+      const zhName = textValue(record, FIELD.nameZh);
+      const enName = textValue(record, FIELD.nameEn);
+      title.textContent = zhName && enName ? `${zhName} / ${enName}` : zhName || enName || textValue(record, FIELD.code);
+      card.appendChild(title);
+
+      appendMetaLine(card, `${label(FIELD.code)}：${textValue(record, FIELD.code)}`);
+      appendMetaLine(card, `${label(FIELD.category)}：${textValue(record, FIELD.category) || "未提供"}`);
+      appendMetaLine(
+        card,
+        `${label(FIELD.region)}：${textValue(record, FIELD.region) || "未提供"} | ${label(FIELD.district)}：${textValue(record, FIELD.district) || "未提供"}`
+      );
+      appendMetaLine(card, `${label(FIELD.sponsor)}：${textValue(record, FIELD.sponsor) || "未提供"}`);
+
+      const pill = document.createElement("span");
+      pill.className = "pill";
+      pill.textContent = "查看詳情";
+      card.appendChild(pill);
+
       resultsEl.appendChild(card);
     });
   }
 
-  buildDistrictFilter();
+  appendOptions(categoryFilter, FIELD.category);
+  appendOptions(regionFilter, FIELD.region);
+  appendOptions(districtFilter, FIELD.district);
   renderResults();
 
   keywordInput.addEventListener("input", renderResults);
-  typeFilter.addEventListener("change", renderResults);
+  categoryFilter.addEventListener("change", renderResults);
+  regionFilter.addEventListener("change", renderResults);
   districtFilter.addEventListener("change", renderResults);
   searchBtn.addEventListener("click", renderResults);
 })();

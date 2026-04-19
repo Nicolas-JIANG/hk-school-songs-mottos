@@ -3,33 +3,35 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>About and Data Sources</title>
+  <title>資料來源與說明</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
   <main class="container page about-page">
-    <h1>About / Data Sources</h1>
+    <h1>資料來源 / About</h1>
     <p>
-      This website consolidates school introduction notes, school mottos, and school song information for
-      Hong Kong primary and secondary schools.
+      此網站現時以 <code>data/HK primary school.xlsx</code> 為主要來源，整理香港小學的校歌、校訓與基本資料。
     </p>
+
+    <h2>目前範圍</h2>
+    <p>現階段只涵蓋小學資料；中學資料會在日後取得來源後再加入。</p>
 
     <h2>Data Sources</h2>
     <ul>
-      <li>Public information from official school websites.</li>
-      <li>Publicly available school profiles and education-related publications.</li>
-      <li>Manual compilation and normalization by site maintainers.</li>
+      <li>主檔案：<code>data/HK primary school.xlsx</code></li>
+      <li>欄位內容包括 <code>校名</code>、<code>School Name</code>、<code>學校官方網址</code>、<code>中文校訓</code>、<code>英文校訓</code>、<code>中文校歌歌詞</code>、<code>校歌網址</code> 等。</li>
+      <li>資料為人工整理，並保留原始工作表中的 <code>備註</code> 與維護者備註欄位。</li>
     </ul>
 
-    <h2>Update Frequency</h2>
-    <p>Data is updated periodically. Last update: 2026-02-23.</p>
+    <h2>網站資料處理</h2>
+    <p>網站使用匯入腳本將 XLSX 轉成標準化資料集，再供前端搜尋與詳情頁讀取。</p>
 
     <h2>Disclaimer</h2>
     <p>
-      Information is provided for reference only. Please verify details against each school's official website.
+      資料僅供參考。涉及學校網址、校訓、校歌或停辦狀態時，請以學校官方網站及最新公開資料為準。
     </p>
 
-    <p><a href="index.html">Back to Search</a></p>
+    <p><a href="index.html">返回搜尋</a></p>
   </main>
 </body>
 </html>

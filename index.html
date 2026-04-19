@@ -3,46 +3,49 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hong Kong School Songs and Mottos</title>
+  <title>香港小學校歌與校訓資料庫</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
   <header class="hero">
     <div class="container">
-      <h1>Hong Kong Primary and Secondary School Songs and Mottos Search</h1>
-      <p>Search schools by Chinese or English name, abbreviation, or district and view motto/song details.</p>
+      <h1>香港小學校歌與校訓資料庫</h1>
+      <p>現時資料來源為 <code>data/HK primary school.xlsx</code>。可按 <code>校名</code>、<code>School Name</code>、<code>No.</code> 搜尋，並以 <code>種類</code>、<code>地區</code>、<code>校網</code> 篩選。</p>
     </div>
   </header>
 
   <main class="container page">
     <section class="search-panel" aria-label="School search and filters">
-      <label for="keyword" class="label">School name keyword</label>
+      <label for="keyword" class="label">校名 / School Name / No.</label>
       <div class="search-row">
-        <input id="keyword" type="search" placeholder="e.g., 皇仁, St. Paul's, QES, DBS" autocomplete="off" />
-        <button id="searchBtn" type="button">Search</button>
+        <input id="keyword" type="search" placeholder="例如：愛秩序灣官立小學 / Aldrich Bay / P1" autocomplete="off" />
+        <button id="searchBtn" type="button">搜尋</button>
       </div>
 
       <div class="filter-row">
         <div>
-          <label for="typeFilter" class="label">School type</label>
-          <select id="typeFilter">
-            <option value="">All</option>
-            <option value="primary">Primary</option>
-            <option value="secondary">Secondary</option>
-            <option value="other">Other</option>
+          <label for="categoryFilter" class="label">種類</label>
+          <select id="categoryFilter">
+            <option value="">全部</option>
           </select>
         </div>
         <div>
-          <label for="districtFilter" class="label">District</label>
+          <label for="regionFilter" class="label">地區</label>
+          <select id="regionFilter">
+            <option value="">全部</option>
+          </select>
+        </div>
+        <div>
+          <label for="districtFilter" class="label">校網</label>
           <select id="districtFilter">
-            <option value="">All</option>
+            <option value="">全部</option>
           </select>
         </div>
       </div>
     </section>
 
     <section class="results-header" aria-live="polite">
-      <h2>Results</h2>
+      <h2>搜尋結果</h2>
       <p id="resultCount"></p>
     </section>
 
@@ -50,7 +53,7 @@
   </main>
 
   <footer class="footer container">
-    <p><a href="about.html">About / Data Sources</a></p>
+    <p><a href="about.html">資料來源 / About</a></p>
   </footer>
 
   <script src="data/schools.js"></script>

@@ -44,6 +44,12 @@ body {
   color: #d6edf8;
 }
 
+.hero code {
+  background: rgba(255, 255, 255, 0.14);
+  padding: 0.08rem 0.35rem;
+  border-radius: 6px;
+}
+
 .page {
   padding: 1.4rem 0 2rem;
 }
@@ -112,7 +118,7 @@ button:hover {
 .filter-row {
   margin-top: 0.85rem;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.7rem;
 }
 
@@ -144,6 +150,10 @@ button:hover {
   color: inherit;
   padding: 0.9rem;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card-empty {
+  display: block;
 }
 
 .card:hover {
@@ -190,6 +200,11 @@ button:hover {
   margin: 0 0 0.5rem;
 }
 
+.detail-subtitle {
+  margin: 0;
+  color: var(--muted);
+}
+
 .section {
   margin-top: 1rem;
   padding-top: 0.8rem;
@@ -206,6 +221,51 @@ button:hover {
   line-height: 1.5;
 }
 
+.field-list {
+  display: grid;
+  gap: 0.7rem;
+  margin: 0;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: minmax(140px, 210px) minmax(0, 1fr);
+  gap: 0.55rem 1rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid #edf1f6;
+}
+
+.field-row dt,
+.field-row dd {
+  margin: 0;
+}
+
+.field-row dt {
+  font-weight: 700;
+}
+
+.field-row dd {
+  color: var(--muted);
+  word-break: break-word;
+}
+
+.text-block + .text-block {
+  margin-top: 1rem;
+}
+
+.text-block h3 {
+  margin: 0 0 0.35rem;
+  font-size: 0.98rem;
+}
+
+.text-block p {
+  margin: 0.35rem 0;
+}
+
+.about-page {
+  padding: 1rem;
+}
+
 .footer {
   padding: 0 0 2rem;
 }
@@ -214,6 +274,12 @@ button:hover {
 .about-page a,
 .link {
   color: var(--brand);
+}
+
+.about-page code {
+  background: #edf3fa;
+  padding: 0.08rem 0.35rem;
+  border-radius: 6px;
 }
 
 @media (max-width: 700px) {
@@ -228,5 +294,9 @@ button:hover {
   .results-header {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .field-row {
+    grid-template-columns: 1fr;
   }
 }

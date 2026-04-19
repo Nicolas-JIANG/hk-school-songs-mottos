@@ -1,4 +1,4 @@
-window.SCHOOL_DATA = {
+{
   "generatedAt": "2026-04-19T06:11:30.153936+00:00",
   "sourceFile": "HK primary school.xlsx",
   "sheetName": "Sheet1",
@@ -15288,7 +15288,4 @@ window.SCHOOL_DATA = {
       "郭樂儀備註（藍色為更新/存疑部分）_2": ""
     }
   ]
-};
-window.SCHOOL_FIELDS = window.SCHOOL_DATA.fieldOrder;
-window.SCHOOL_FIELD_LABELS = window.SCHOOL_DATA.fieldLabels;
-window.SCHOOLS = window.SCHOOL_DATA.records;
+}

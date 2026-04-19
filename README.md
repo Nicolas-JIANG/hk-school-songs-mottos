@@ -1,12 +1,30 @@
 # Hong Kong School Songs and Mottos
 
-A static responsive website for searching Hong Kong primary/secondary schools and viewing school intro, motto, song, and official website links.
+A static responsive website for searching Hong Kong school song and motto data.
+
+Current public dataset:
+
+- `data/HK primary school.xlsx`
+- Scope: primary schools only for now
 
 ## Pages
 
 - `index.html`: Home/search page.
 - `detail.html`: School detail page.
 - `about.html`: Data sources and disclaimer.
+
+## Data Import
+
+The website dataset is generated from the workbook source.
+
+```bash
+python3 scripts/import_primary_workbook.py
+```
+
+Generated files:
+
+- `data/schools.json`
+- `data/schools.js`
 
 ## Run locally
 
