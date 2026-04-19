@@ -24,9 +24,7 @@
     songZh: "中文校歌歌詞",
     songEn: "英文校歌歌詞",
     songUrl: "校歌網址",
-    youtube: "Youtube",
-    remark: "備註",
-    supplementaryNote: "補充註記"
+    youtube: "Youtube"
   };
 
   const content = document.getElementById("detailContent");
@@ -225,14 +223,7 @@
       linksSection.appendChild(empty);
     }
 
-    const notesSection = createSection("備註");
-    if (!appendFieldList(notesSection, record, [FIELD.remark, FIELD.supplementaryNote])) {
-      const empty = document.createElement("p");
-      empty.textContent = "未提供備註。";
-      notesSection.appendChild(empty);
-    }
-
-    content.replaceChildren(title, codeLine, basicSection, mottoSection, songSection, linksSection, notesSection);
+    content.replaceChildren(title, codeLine, basicSection, mottoSection, songSection, linksSection);
   }
 
   backBtn.addEventListener("click", () => {

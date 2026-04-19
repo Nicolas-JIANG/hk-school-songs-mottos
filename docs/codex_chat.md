@@ -328,3 +328,17 @@ Updated js/app.js so the search-result card now shows 校訓 using the 中文校
 
 [2026-04-19 16:18:02 +0800] ASSISTANT:
 Deleted the old local workbook file data/HK primary school.xlsx. Confirmed data/HK primary school_v2.xlsx is ignored by Git and will stay private. Preparing a commit and push for the regenerated v2 dataset, importer changes, and related site updates on main.
+
+[2026-04-19 16:20:18 +0800] USER:
+verify the GitHub Pages site is serving the new workbook-based data
+
+[2026-04-19 16:20:18 +0800] ASSISTANT:
+Verified. The live GitHub Pages deployment is serving the latest v2-based build from commit 2e3db45. Live index.html, live js/app.js, and live data/schools.js all match the current local files exactly by SHA-256, and the live data/schools.js response is HTTP 200 with last-modified Sun, 19 Apr 2026 08:19:04 GMT.
+
+One privacy caveat remains: although the workbook file itself is not in Git, the public generated data still exposes the filename in sourceFile as HK primary school_v2.xlsx.
+
+[2026-04-19 16:29:04 +0800] USER:
+<image> Delete the " 備註" block/part, and re-do the above process, such that I can verify the updated website directly
+
+[2026-04-19 16:29:33 +0800] ASSISTANT:
+Removed the 備註 section from the detail-page renderer in js/detail.js and verified the script still parses with node --check. Preparing a small push and live-site verification so the deployed page can be refreshed directly.
