@@ -4,7 +4,8 @@ A static responsive website for searching Hong Kong school song and motto data.
 
 Current public dataset:
 
-- `data/HK primary school.xlsx`
+- `data/schools.json`
+- `data/schools.js`
 - Scope: primary schools only for now
 
 ## Pages
@@ -15,7 +16,7 @@ Current public dataset:
 
 ## Data Import
 
-The website dataset is generated from the workbook source.
+The website dataset is generated from a private local workbook source. The source workbook is intentionally not tracked in Git.
 
 ```bash
 python3 scripts/import_primary_workbook.py
