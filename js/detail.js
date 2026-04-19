@@ -26,8 +26,7 @@
     songUrl: "校歌網址",
     youtube: "Youtube",
     remark: "備註",
-    maintainerNote1: "郭樂儀備註（藍色為更新/存疑部分）_1",
-    maintainerNote2: "郭樂儀備註（藍色為更新/存疑部分）_2"
+    supplementaryNote: "補充註記"
   };
 
   const content = document.getElementById("detailContent");
@@ -167,7 +166,7 @@
   function renderRecord(record) {
     const zhName = textValue(record, FIELD.nameZh);
     const enName = textValue(record, FIELD.nameEn);
-    const titleText = zhName && enName ? `${zhName} / ${enName}` : zhName || enName || textValue(record, FIELD.code);
+    const titleText = zhName && enName ? `${zhName} / ${enName}` : zhName || enName || "未命名學校";
 
     crumbName.textContent = titleText;
     document.title = titleText;
@@ -177,11 +176,17 @@
 
     const codeLine = document.createElement("p");
     codeLine.className = "detail-subtitle";
-    codeLine.textContent = `${label(FIELD.code)}：${textValue(record, FIELD.code)} | ${label(FIELD.schoolLevel)}：${textValue(record, FIELD.schoolLevel)}`;
+    const subtitleParts = [];
+    if (textValue(record, FIELD.schoolLevel)) {
+      subtitleParts.push(`${label(FIELD.schoolLevel)}：${textValue(record, FIELD.schoolLevel)}`);
+    }
+    if (textValue(record, FIELD.category)) {
+      subtitleParts.push(`${label(FIELD.category)}：${textValue(record, FIELD.category)}`);
+    }
+    codeLine.textContent = subtitleParts.join(" | ");
 
     const basicSection = createSection("基本資料");
     appendFieldList(basicSection, record, [
-      FIELD.code,
       FIELD.schoolLevel,
       FIELD.nameZh,
       FIELD.nameEn,
@@ -221,9 +226,7 @@
     }
 
     const notesSection = createSection("備註");
-    if (
-      !appendFieldList(notesSection, record, [FIELD.remark, FIELD.maintainerNote1, FIELD.maintainerNote2])
-    ) {
+    if (!appendFieldList(notesSection, record, [FIELD.remark, FIELD.supplementaryNote])) {
       const empty = document.createElement("p");
       empty.textContent = "未提供備註。";
       notesSection.appendChild(empty);

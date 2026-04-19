@@ -6,6 +6,7 @@ import json
 import re
 import zipfile
 import xml.etree.ElementTree as ET
+import argparse
 from collections import Counter
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -14,7 +15,7 @@ from typing import Iterable
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE_PATH = ROOT / "data" / "HK primary school.xlsx"
+DEFAULT_SOURCE_PATH = ROOT / "data" / "HK primary school_v2.xlsx"
 JSON_PATH = ROOT / "data" / "schools.json"
 JS_PATH = ROOT / "data" / "schools.js"
 
@@ -25,6 +26,7 @@ NS = {"main": MAIN_NS, "rel": REL_NS}
 
 LINK_HEADERS = {"學校官方網址", "校歌網址", "Youtube"}
 TITLE_KEYS = ("校名", "School Name")
+BLANK_HEADER_PREFIX = "補充註記"
 
 
 @dataclass(frozen=True)
@@ -59,12 +61,13 @@ def normalize_whitespace(value: str) -> str:
 
 
 def make_column_defs(raw_headers: Iterable[str]) -> list[ColumnDef]:
-    counts = Counter(raw_headers)
+    normalized_headers = [normalize_whitespace(header) for header in raw_headers]
+    labels = [header if header else BLANK_HEADER_PREFIX for header in normalized_headers]
+    counts = Counter(labels)
     seen: Counter[str] = Counter()
     column_defs: list[ColumnDef] = []
 
-    for index, label in enumerate(raw_headers, start=1):
-        label = normalize_whitespace(label)
+    for index, label in enumerate(labels, start=1):
         seen[label] += 1
         if counts[label] > 1:
             key = f"{label}_{seen[label]}"
@@ -180,7 +183,6 @@ def normalize_record(
     source_row: int,
 ) -> dict[str, object]:
     record: dict[str, object] = {
-        "id": normalize_whitespace(row[column_defs[1].index]["value"]).lower(),
         "sourceRow": source_row,
     }
 
@@ -201,8 +203,37 @@ def normalize_record(
     return record
 
 
-def build_payload() -> dict[str, object]:
-    with zipfile.ZipFile(SOURCE_PATH) as archive:
+def slugify(value: str) -> str:
+    normalized = normalize_whitespace(value).lower()
+    if not normalized:
+        return ""
+    slug = re.sub(r"\s+", "-", normalized)
+    slug = re.sub(r"[/?#%&]+", "-", slug)
+    slug = re.sub(r"-{2,}", "-", slug).strip("-")
+    return slug
+
+
+def assign_ids(records: list[dict[str, object]]) -> None:
+    used_ids: Counter[str] = Counter()
+    for record in records:
+        base_id = ""
+        for key in TITLE_KEYS:
+            if key in record:
+                base_id = slugify(str(record[key]))
+                if base_id:
+                    break
+        if not base_id:
+            base_id = f"row-{record['sourceRow']}"
+
+        used_ids[base_id] += 1
+        if used_ids[base_id] == 1:
+            record["id"] = base_id
+        else:
+            record["id"] = f"{base_id}-{used_ids[base_id]}"
+
+
+def build_payload(source_path: Path) -> dict[str, object]:
+    with zipfile.ZipFile(source_path) as archive:
         sheet_name, sheet_path = get_sheet_path(archive)
         shared_strings = get_shared_strings(archive)
         hyperlinks = get_hyperlinks(archive, sheet_path)
@@ -218,10 +249,11 @@ def build_payload() -> dict[str, object]:
         normalize_record(row, column_defs, hyperlinks, source_row=position)
         for position, row in enumerate(rows[1:], start=2)
     ]
+    assign_ids(records)
 
     payload = {
         "generatedAt": datetime.now(timezone.utc).isoformat(),
-        "sourceFile": SOURCE_PATH.name,
+        "sourceFile": source_path.name,
         "sheetName": sheet_name,
         "fieldOrder": [column.key for column in column_defs],
         "fieldLabels": {column.key: column.label for column in column_defs},
@@ -247,9 +279,14 @@ def write_outputs(payload: dict[str, object]) -> None:
 
 
 def main() -> None:
-    payload = build_payload()
+    parser = argparse.ArgumentParser(description="Import the primary-school workbook into website data files.")
+    parser.add_argument("source", nargs="?", default=str(DEFAULT_SOURCE_PATH), help="Path to the XLSX workbook.")
+    args = parser.parse_args()
+
+    source_path = Path(args.source).expanduser().resolve()
+    payload = build_payload(source_path)
     write_outputs(payload)
-    print(f"Imported {len(payload['records'])} records from {SOURCE_PATH.name}")
+    print(f"Imported {len(payload['records'])} records from {source_path.name}")
     print(f"Wrote {JSON_PATH.relative_to(ROOT)} and {JS_PATH.relative_to(ROOT)}")
 
 

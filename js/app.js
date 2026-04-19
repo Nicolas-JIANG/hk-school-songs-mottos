@@ -11,6 +11,7 @@
     region: "地區",
     district: "校網",
     schoolLevel: "中學/小學",
+    mottoZh: "中文校訓",
     sponsor: "辦學團體",
     website: "學校官方網址"
   };
@@ -38,7 +39,7 @@
 
   function searchableText(record) {
     return [
-      textValue(record, FIELD.code),
+      textValue(record, FIELD.schoolLevel),
       textValue(record, FIELD.nameZh),
       textValue(record, FIELD.nameEn),
       textValue(record, FIELD.category),
@@ -55,11 +56,7 @@
     if (!query) return 1;
 
     const q = normalize(query);
-    const primaryFields = [
-      textValue(record, FIELD.code),
-      textValue(record, FIELD.nameZh),
-      textValue(record, FIELD.nameEn)
-    ]
+    const primaryFields = [textValue(record, FIELD.nameZh), textValue(record, FIELD.nameEn)]
       .filter(Boolean)
       .map((value) => value.toLowerCase());
 
@@ -108,9 +105,9 @@
       .map((record) => ({ record, score: scoreSchool(record, query) }))
       .filter((entry) => (query ? entry.score > 0 : true))
       .sort((a, b) => {
-        const codeA = textValue(a.record, FIELD.code);
-        const codeB = textValue(b.record, FIELD.code);
-        return b.score - a.score || codeA.localeCompare(codeB, "en");
+        const nameA = textValue(a.record, FIELD.nameZh) || textValue(a.record, FIELD.nameEn);
+        const nameB = textValue(b.record, FIELD.nameZh) || textValue(b.record, FIELD.nameEn);
+        return b.score - a.score || nameA.localeCompare(nameB, "zh-Hant");
       });
 
     resultCountEl.textContent = `顯示 ${filtered.length} 間學校`;
@@ -132,16 +129,18 @@
       const title = document.createElement("h3");
       const zhName = textValue(record, FIELD.nameZh);
       const enName = textValue(record, FIELD.nameEn);
-      title.textContent = zhName && enName ? `${zhName} / ${enName}` : zhName || enName || textValue(record, FIELD.code);
+      title.textContent = zhName && enName ? `${zhName} / ${enName}` : zhName || enName || "未命名學校";
       card.appendChild(title);
 
-      appendMetaLine(card, `${label(FIELD.code)}：${textValue(record, FIELD.code)}`);
+      if (textValue(record, FIELD.schoolLevel)) {
+        appendMetaLine(card, `${label(FIELD.schoolLevel)}：${textValue(record, FIELD.schoolLevel)}`);
+      }
       appendMetaLine(card, `${label(FIELD.category)}：${textValue(record, FIELD.category) || "未提供"}`);
       appendMetaLine(
         card,
         `${label(FIELD.region)}：${textValue(record, FIELD.region) || "未提供"} | ${label(FIELD.district)}：${textValue(record, FIELD.district) || "未提供"}`
       );
-      appendMetaLine(card, `${label(FIELD.sponsor)}：${textValue(record, FIELD.sponsor) || "未提供"}`);
+      appendMetaLine(card, `校訓：${textValue(record, FIELD.mottoZh) || "未提供"}`);
 
       const pill = document.createElement("span");
       pill.className = "pill";
