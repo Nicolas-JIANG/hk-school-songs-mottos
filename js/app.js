@@ -17,6 +17,7 @@
   };
 
   const keywordInput = document.getElementById("keyword");
+  const schoolLevelFilter = document.getElementById("schoolLevelFilter");
   const categoryFilter = document.getElementById("categoryFilter");
   const regionFilter = document.getElementById("regionFilter");
   const districtFilter = document.getElementById("districtFilter");
@@ -94,11 +95,13 @@
 
   function renderResults() {
     const query = keywordInput.value;
+    const schoolLevel = schoolLevelFilter.value;
     const category = categoryFilter.value;
     const region = regionFilter.value;
     const district = districtFilter.value;
 
     const filtered = schools
+      .filter((record) => (!schoolLevel ? true : textValue(record, FIELD.schoolLevel) === schoolLevel))
       .filter((record) => (!category ? true : textValue(record, FIELD.category) === category))
       .filter((record) => (!region ? true : textValue(record, FIELD.region) === region))
       .filter((record) => (!district ? true : textValue(record, FIELD.district) === district))
@@ -151,12 +154,14 @@
     });
   }
 
+  appendOptions(schoolLevelFilter, FIELD.schoolLevel);
   appendOptions(categoryFilter, FIELD.category);
   appendOptions(regionFilter, FIELD.region);
   appendOptions(districtFilter, FIELD.district);
   renderResults();
 
   keywordInput.addEventListener("input", renderResults);
+  schoolLevelFilter.addEventListener("change", renderResults);
   categoryFilter.addEventListener("change", renderResults);
   regionFilter.addEventListener("change", renderResults);
   districtFilter.addEventListener("change", renderResults);

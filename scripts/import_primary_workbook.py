@@ -15,7 +15,6 @@ from typing import Iterable
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_SOURCE_PATH = ROOT / "data" / "HK primary school_v2.xlsx"
 JSON_PATH = ROOT / "data" / "schools.json"
 JS_PATH = ROOT / "data" / "schools.js"
 
@@ -232,7 +231,7 @@ def assign_ids(records: list[dict[str, object]]) -> None:
             record["id"] = f"{base_id}-{used_ids[base_id]}"
 
 
-def build_payload(source_path: Path) -> dict[str, object]:
+def read_workbook(source_path: Path) -> tuple[str, list[ColumnDef], list[dict[str, object]]]:
     with zipfile.ZipFile(source_path) as archive:
         sheet_name, sheet_path = get_sheet_path(archive)
         shared_strings = get_shared_strings(archive)
@@ -249,13 +248,59 @@ def build_payload(source_path: Path) -> dict[str, object]:
         normalize_record(row, column_defs, hyperlinks, source_row=position)
         for position, row in enumerate(rows[1:], start=2)
     ]
+    return sheet_name, column_defs, records
+
+
+def merge_column_defs(workbooks: list[tuple[str, list[ColumnDef], list[dict[str, object]]]]) -> list[ColumnDef]:
+    merged: list[ColumnDef] = []
+    seen: set[str] = set()
+    for _, column_defs, _ in workbooks:
+        for column in column_defs:
+            if column.key in seen:
+                continue
+            merged.append(ColumnDef(index=len(merged) + 1, key=column.key, label=column.label))
+            seen.add(column.key)
+    return merged
+
+
+def align_records(records: list[dict[str, object]], field_order: list[str]) -> list[dict[str, object]]:
+    aligned: list[dict[str, object]] = []
+    for record in records:
+        normalized = {key: record.get(key, "") for key in field_order}
+        normalized["sourceRow"] = record.get("sourceRow", "")
+        aligned.append(normalized)
+    return aligned
+
+
+def discover_default_sources() -> list[Path]:
+    sources = [
+        path
+        for path in (ROOT / "data").glob("*.xlsx")
+        if not path.name.startswith("~$")
+    ]
+    return sorted(sources, key=lambda path: path.name.casefold())
+
+
+def build_payload(source_paths: list[Path]) -> dict[str, object]:
+    if not source_paths:
+        raise RuntimeError("No XLSX source workbooks found.")
+
+    workbooks = [read_workbook(source_path) for source_path in source_paths]
+    column_defs = merge_column_defs(workbooks)
+    field_order = [column.key for column in column_defs]
+
+    records: list[dict[str, object]] = []
+    for _, _, workbook_records in workbooks:
+        records.extend(align_records(workbook_records, field_order))
+
     assign_ids(records)
 
     payload = {
         "generatedAt": datetime.now(timezone.utc).isoformat(),
-        "sourceFile": source_path.name,
-        "sheetName": sheet_name,
-        "fieldOrder": [column.key for column in column_defs],
+        "sourceType": "private-workbook-import",
+        "sourceCount": len(source_paths),
+        "sheetNames": [sheet_name for sheet_name, _, _ in workbooks],
+        "fieldOrder": field_order,
         "fieldLabels": {column.key: column.label for column in column_defs},
         "records": records,
     }
@@ -279,14 +324,22 @@ def write_outputs(payload: dict[str, object]) -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Import the primary-school workbook into website data files.")
-    parser.add_argument("source", nargs="?", default=str(DEFAULT_SOURCE_PATH), help="Path to the XLSX workbook.")
+    parser = argparse.ArgumentParser(description="Import private workbook sources into website data files.")
+    parser.add_argument(
+        "sources",
+        nargs="*",
+        help="Paths to XLSX workbooks. Defaults to all non-temporary .xlsx files in data/.",
+    )
     args = parser.parse_args()
 
-    source_path = Path(args.source).expanduser().resolve()
-    payload = build_payload(source_path)
+    source_paths = (
+        [Path(source).expanduser().resolve() for source in args.sources]
+        if args.sources
+        else discover_default_sources()
+    )
+    payload = build_payload(source_paths)
     write_outputs(payload)
-    print(f"Imported {len(payload['records'])} records from {source_path.name}")
+    print(f"Imported {len(payload['records'])} records from {len(source_paths)} workbook(s)")
     print(f"Wrote {JSON_PATH.relative_to(ROOT)} and {JS_PATH.relative_to(ROOT)}")
 
 

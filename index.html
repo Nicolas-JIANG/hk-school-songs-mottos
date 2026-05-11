@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>香港小學校歌與校訓資料庫</title>
+  <title>香港中小學校歌與校訓資料庫</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
   <header class="hero">
     <div class="container">
-      <h1>香港小學校歌與校訓資料庫</h1>
-      <p>現時資料由內部整理的小學工作簿匯入。可按 <code>校名</code>、<code>School Name</code> 搜尋，並以 <code>種類</code>、<code>地區</code>、<code>校網</code> 篩選。</p>
+      <h1>香港中小學校歌與校訓資料庫</h1>
+      <p>現時資料由內部整理的中小學工作簿匯入。可按 <code>校名</code>、<code>School Name</code> 搜尋，並以 <code>中學/小學</code>、<code>種類</code>、<code>地區</code>、<code>校網</code> 篩選。</p>
     </div>
   </header>
 
@@ -23,6 +23,12 @@
       </div>
 
       <div class="filter-row">
+        <div>
+          <label for="schoolLevelFilter" class="label">中學/小學</label>
+          <select id="schoolLevelFilter">
+            <option value="">全部</option>
+          </select>
+        </div>
         <div>
           <label for="categoryFilter" class="label">種類</label>
           <select id="categoryFilter">

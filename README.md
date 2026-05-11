@@ -6,7 +6,7 @@ Current public dataset:
 
 - `data/schools.json`
 - `data/schools.js`
-- Scope: primary schools only for now
+- Scope: primary and secondary schools
 
 ## Pages
 
@@ -16,11 +16,13 @@ Current public dataset:
 
 ## Data Import
 
-The website dataset is generated from a private local workbook source. The source workbook is intentionally not tracked in Git.
+The website dataset is generated from private local workbook sources. Source workbooks are intentionally not tracked in Git.
 
 ```bash
 python3 scripts/import_primary_workbook.py
 ```
+
+By default, the importer reads all non-temporary `.xlsx` files in `data/`.
 
 Generated files:
 
