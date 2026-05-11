@@ -1,61 +1,143 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>香港中小學校歌與校訓資料庫</title>
+  <title>香港中小學校歌與校訓研究計劃</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
-  <header class="hero">
-    <div class="container">
-      <h1>香港中小學校歌與校訓資料庫</h1>
-      <p>現時資料由內部整理的中小學工作簿匯入。可按 <code>校名</code>、<code>School Name</code> 搜尋，並以 <code>中學/小學</code>、<code>種類</code>、<code>地區</code>、<code>校網</code> 篩選。</p>
-    </div>
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="返回首頁">
+      <span class="brand-mark">HK</span>
+      <span>School Songs &amp; Mottos</span>
+    </a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a href="schools.html">School Database</a>
+      <a href="project-report.html">Project Report</a>
+      <a href="publications.html">Publications</a>
+      <a href="seminar-videos.html">Videos</a>
+    </nav>
   </header>
 
-  <main class="container page">
-    <section class="search-panel" aria-label="School search and filters">
-      <label for="keyword" class="label">校名 / School Name</label>
-      <div class="search-row">
-        <input id="keyword" type="search" placeholder="例如：愛秩序灣官立小學 / Aldrich Bay Government Primary School" autocomplete="off" />
-        <button id="searchBtn" type="button">搜尋</button>
-      </div>
+  <main>
+    <section class="home-hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">Hong Kong School Songs and Mottos Project</p>
+          <h1>香港中小學校歌與校訓研究資料庫</h1>
+          <p class="hero-lede">
+            本網站整理香港中小學的校歌、校訓、學校基本資料與相關研究成果，支援學校文化、教育史與社區記憶的查閱、保存及討論。
+          </p>
+          <p class="hero-lede en">
+            A bilingual project portal for exploring Hong Kong primary and secondary school songs, mottos, school profiles, and related research outputs.
+          </p>
+          <div class="hero-actions">
+            <a class="btn primary" href="schools.html">進入學校資料庫</a>
+            <a class="btn ghost" href="seminar-videos.html">觀看研討會影片</a>
+          </div>
+        </div>
 
-      <div class="filter-row">
-        <div>
-          <label for="schoolLevelFilter" class="label">中學/小學</label>
-          <select id="schoolLevelFilter">
-            <option value="">全部</option>
-          </select>
-        </div>
-        <div>
-          <label for="categoryFilter" class="label">種類</label>
-          <select id="categoryFilter">
-            <option value="">全部</option>
-          </select>
-        </div>
-        <div>
-          <label for="regionFilter" class="label">地區</label>
-          <select id="regionFilter">
-            <option value="">全部</option>
-          </select>
-        </div>
-        <div>
-          <label for="districtFilter" class="label">校網</label>
-          <select id="districtFilter">
-            <option value="">全部</option>
-          </select>
+        <div class="hero-visual" aria-label="Project image area">
+          <div class="visual-card main-photo-slot">
+            <span>Project Photo</span>
+            <strong>校歌 · 校訓 · 記憶</strong>
+          </div>
+          <div class="visual-card small-photo-slot one">Primary</div>
+          <div class="visual-card small-photo-slot two">Secondary</div>
+          <div class="visual-card small-photo-slot three">Research</div>
         </div>
       </div>
     </section>
 
-    <section class="results-header" aria-live="polite">
-      <h2>搜尋結果</h2>
-      <p id="resultCount"></p>
+    <section class="container stat-strip" aria-label="Dataset statistics">
+      <div>
+        <strong id="totalSchools">--</strong>
+        <span>Schools in dataset</span>
+      </div>
+      <div>
+        <strong id="primarySchools">--</strong>
+        <span>Primary schools</span>
+      </div>
+      <div>
+        <strong id="secondarySchools">--</strong>
+        <span>Secondary schools</span>
+      </div>
     </section>
 
-    <section id="results" class="cards" aria-label="Search results"></section>
+    <section class="container section-block">
+      <div class="section-heading">
+        <p class="eyebrow">Explore the Project</p>
+        <h2>第二層內容入口</h2>
+        <p>Choose a project area below. The school database remains searchable, while reports, publications, and videos can be expanded with external links.</p>
+      </div>
+
+      <div class="feature-grid">
+        <a class="feature-card database" href="schools.html">
+          <span class="feature-kicker">Database</span>
+          <h3>學校資料庫</h3>
+          <p>Search by Chinese or English school name, school level, school type, district, and school net.</p>
+          <span class="feature-link">Search schools</span>
+        </a>
+        <a class="feature-card report" href="project-report.html">
+          <span class="feature-kicker">Report</span>
+          <h3>項目報告</h3>
+          <p>Collect project reports, progress summaries, and downloadable research materials.</p>
+          <span class="feature-link">View reports</span>
+        </a>
+        <a class="feature-card publications" href="publications.html">
+          <span class="feature-kicker">Publications</span>
+          <h3>出版與論文</h3>
+          <p>Link journal articles, conference papers, book chapters, and other scholarly outputs.</p>
+          <span class="feature-link">Read publications</span>
+        </a>
+        <a class="feature-card videos" href="seminar-videos.html">
+          <span class="feature-kicker">Videos</span>
+          <h3>研討會影片</h3>
+          <p>Embed seminar report videos and presentation recordings through stable external links.</p>
+          <span class="feature-link">Watch videos</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="container section-block two-column">
+      <div>
+        <p class="eyebrow">Project Summary</p>
+        <h2>保存學校聲音與價值</h2>
+        <p>
+          校歌與校訓承載學校歷史、教育理想與社群身份。本項目以可搜尋的方式整理資料，方便教師、學生、研究者及公眾查閱香港中小學相關文本與連結。
+        </p>
+      </div>
+      <div class="summary-list">
+        <article>
+          <h3>Searchable archive</h3>
+          <p>Centralized school records with official website links and available motto/song content.</p>
+        </article>
+        <article>
+          <h3>Research outputs</h3>
+          <p>Dedicated pages for reports, publications, and seminar videos as the project develops.</p>
+        </article>
+        <article>
+          <h3>Public discussion</h3>
+          <p>A shareable website for collecting feedback and discussing the project with collaborators.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="container image-showcase" aria-label="Project photos placeholder">
+      <figure class="photo-placeholder wide">
+        <span>Photo slot 01</span>
+        <figcaption>可放置項目活動、學校訪問或研究材料相片</figcaption>
+      </figure>
+      <figure class="photo-placeholder">
+        <span>Photo slot 02</span>
+        <figcaption>Seminar / Workshop</figcaption>
+      </figure>
+      <figure class="photo-placeholder">
+        <span>Photo slot 03</span>
+        <figcaption>Archive / Publication</figcaption>
+      </figure>
+    </section>
   </main>
 
   <footer class="footer container">
@@ -63,6 +145,6 @@
   </footer>
 
   <script src="data/schools.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/home.js"></script>
 </body>
 </html>

@@ -1,20 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>學校詳情</title>
+  <title>學校詳情 | 香港中小學校歌與校訓研究計劃</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="返回首頁">
+      <span class="brand-mark">HK</span>
+      <span>School Songs &amp; Mottos</span>
+    </a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a href="schools.html" aria-current="page">School Database</a>
+      <a href="project-report.html">Project Report</a>
+      <a href="publications.html">Publications</a>
+      <a href="seminar-videos.html">Videos</a>
+    </nav>
+  </header>
+
   <main class="container page detail-page">
     <nav class="breadcrumb" aria-label="Breadcrumb">
-      <a href="index.html">搜尋頁</a>
+      <a href="index.html">首頁</a>
+      <span>/</span>
+      <a href="schools.html">學校資料庫</a>
       <span>/</span>
       <span id="crumbName">學校詳情</span>
     </nav>
 
-    <button id="backBtn" class="secondary-btn" type="button">返回搜尋</button>
+    <button id="backBtn" class="secondary-btn" type="button">返回學校資料庫</button>
 
     <article id="detailContent" class="detail-card"></article>
   </main>

@@ -155,8 +155,8 @@
     message.textContent = "此頁面的 id 未對應到目前資料集。";
     const link = document.createElement("a");
     link.className = "link";
-    link.href = "index.html";
-    link.textContent = "返回搜尋頁";
+    link.href = "schools.html";
+    link.textContent = "返回學校資料庫";
 
     content.replaceChildren(title, message, link);
   }
@@ -227,7 +227,7 @@
   }
 
   backBtn.addEventListener("click", () => {
-    window.location.href = "index.html";
+    window.location.href = "schools.html";
   });
 
   const record = getRecordById();
