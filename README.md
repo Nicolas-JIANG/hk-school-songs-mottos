@@ -32,7 +32,7 @@ https://drive.google.com/file/d/FILE_ID/preview
 
 ## Data Import
 
-The school dataset is generated from private local workbook sources. Source workbooks are intentionally not tracked in Git.
+The school dataset is generated from workbook sources in `data/`. The current workbook sources are committed for VM deployment and archival continuity.
 
 ```bash
 python3 scripts/import_primary_workbook.py
@@ -44,6 +44,10 @@ Generated files:
 
 - `data/schools.json`
 - `data/schools.js`
+
+## Nginx Deployment
+
+The site can be served directly by Nginx as static files. Use the sample config in `deploy/nginx/hk-school-songs-mottos.conf` and the deployment notes in `docs/nginx-deployment.md`.
 
 ## Run Locally
 
