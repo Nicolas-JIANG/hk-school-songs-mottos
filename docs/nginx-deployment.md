@@ -24,7 +24,7 @@ The config allows these public paths:
 - `/js/`
 - `/data/`
 
-It blocks repository internals such as `.git/`, `docs/`, `scripts/`, `deploy/`, Markdown files, Python scripts, shell scripts, and logs.
+It blocks repository internals such as `.git/`, `docs/`, `scripts/`, `deploy/`, `IT_report/`, Markdown files, Python scripts, shell scripts, and logs.
 
 ## First-Time Setup On Ubuntu
 
@@ -46,10 +46,77 @@ sudo nginx -t
 sudo systemctl reload nginx
 ```
 
-If IT gives you a domain, edit this line in the config before reloading Nginx:
+The config is prepared for:
 
 ```nginx
-server_name your-domain.example.edu.hk;
+server_name mottoanthem.eduhk.hk mottoanthem.ied.edu.hk;
+```
+
+If IT uses a different domain, update `server_name` before reloading Nginx.
+
+## HTTPS Certificate Paths
+
+The config expects these certificate paths:
+
+```nginx
+ssl_certificate /etc/ssl/certs/mottoanthem.eduhk.hk.crt;
+ssl_certificate_key /etc/ssl/private/mottoanthem.eduhk.hk.key;
+```
+
+If IT provides different certificate/key paths, update the config and run:
+
+```bash
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+## Security Scan Remediation
+
+The Nginx config remediates these scanner findings by configuration:
+
+- HSTS missing: adds `Strict-Transport-Security: max-age=31536000` on HTTPS responses.
+- Weak TLS cipher suites: allows TLS 1.2/1.3 and only AEAD cipher suites for TLS 1.2.
+- CSP missing: adds a restrictive `Content-Security-Policy` compatible with local static files and Google Drive video preview iframes.
+- COOP missing: adds `Cross-Origin-Opener-Policy: same-origin`.
+- COEP missing: adds `Cross-Origin-Embedder-Policy: credentialless` to reduce breakage risk for Google Drive embeds.
+- Permissions-Policy missing: disables unnecessary browser APIs.
+- X-Content-Type-Options missing: adds `X-Content-Type-Options: nosniff`.
+
+The Nessus finding `nginx 1.3.0 < 1.28.2 / 1.29.x < 1.29.5 SSL Upstream Injection` cannot be fixed by website files alone. IT must upgrade the VM's Nginx package to a fixed version, at least:
+
+```text
+nginx 1.28.2 or later, or nginx 1.29.5 or later
+```
+
+After upgrading, verify:
+
+```bash
+nginx -v
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+## Header Verification
+
+From a machine that can reach the internal site:
+
+```bash
+curl -I https://mottoanthem.eduhk.hk/
+curl -I https://mottoanthem.eduhk.hk/schools.html
+curl -I https://mottoanthem.eduhk.hk/data/schools.js
+```
+
+Expected important headers include:
+
+```text
+Strict-Transport-Security: max-age=31536000
+Content-Security-Policy: ...
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Embedder-Policy: credentialless
+Permissions-Policy: ...
+X-Content-Type-Options: nosniff
+X-Frame-Options: SAMEORIGIN
+Referrer-Policy: strict-origin-when-cross-origin
 ```
 
 ## Updating The Website
@@ -62,6 +129,10 @@ sudo nginx -t
 sudo systemctl reload nginx
 ```
 
-## HTTPS
+## Re-Scan Request
 
-For an institutional VM, ask IT whether HTTPS should be handled by their reverse proxy/load balancer or by the VM itself. If handled on the VM and the domain is public, use Certbot/Let's Encrypt after DNS points to the VM.
+After applying the config and upgrading Nginx, ask IT to re-run the vulnerability scan for:
+
+```text
+https://mottoanthem.eduhk.hk/
+```
