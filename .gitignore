@@ -3,3 +3,4 @@
 ~$*.xlsx
 __pycache__/
 data/*.xlsx
+IT_report/

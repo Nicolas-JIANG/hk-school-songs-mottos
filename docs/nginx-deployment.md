@@ -56,14 +56,26 @@ If IT uses a different domain, update `server_name` before reloading Nginx.
 
 ## HTTPS Certificate Paths
 
-The config expects these certificate paths:
+The IT email exchange confirms that the SSL certificate and private key were generated/imported into:
 
-```nginx
-ssl_certificate /etc/ssl/certs/mottoanthem.eduhk.hk.crt;
-ssl_certificate_key /etc/ssl/private/mottoanthem.eduhk.hk.key;
+```text
+/etc/nginx/ssl
 ```
 
-If IT provides different certificate/key paths, update the config and run:
+The exact filenames were not stated in the email. Check them on the VM before reloading Nginx:
+
+```bash
+sudo ls -l /etc/nginx/ssl
+```
+
+The config currently expects:
+
+```nginx
+ssl_certificate /etc/nginx/ssl/mottoanthem.eduhk.hk.crt;
+ssl_certificate_key /etc/nginx/ssl/mottoanthem.eduhk.hk.key;
+```
+
+If the filenames differ, update only the filenames in the config and run:
 
 ```bash
 sudo nginx -t
